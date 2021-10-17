@@ -43,6 +43,7 @@ def test_w_real_imgs(model, directory):
 
 if __name__ == "__main__":
 	log_to_std()
+	log_to_file('log/test.log')
 
 	model = ConvNetModel(training_data_dir='/Users/mehmet/Desktop/fashion-mnist-data/training',
 											 class_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
