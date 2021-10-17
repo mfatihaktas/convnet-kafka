@@ -28,6 +28,22 @@ in the training data set.
 * img_height, img_width, num_colors: Size of every image in the data set should be the
 same and be given by height x width x colors. The values set for these have to be consistent
 with the actual image size in the data set.
+
+How to use?
+Once an instance of ConvNetModel has been constructed, it will check if a previously
+trained model exists in ./checkpoint. If so, the old model will be loaded. If not, a new model
+will be trained over the data set in ./training_data_dir. If a new model needs to be trained
+despite the presence of an old model, then train() should be called explicity on the model.
+Note that the model in ./checkpoint will be replaced only if the newly trained model achieves
+higher accuracy than the old one.
+E.g.,
+model = ConvNetModel(training_data_dir='./training', class_names=['0', '1'])
+model.train()  # Will force training the model even if a previously trained model exists
+
+Class labels can be got for a given (numpy) array of images, img_array, as:
+model.get_predicted_class_labels(img_array)
+
+See test.py for example(s) on how to use ConvNetModel.
 """
 
 import os
@@ -59,10 +75,7 @@ class ConvNetModel:
 		self.train_dataset = None
 		self.validation_dataset = None
 
-		# self.checkpoint_path = 'checkpoint/cp.ckpt'
 		self.checkpoint_path = './checkpoint/cp.ckpt'
-		# self.checkpoint_dir = os.path.dirname('checkpoint')
-
 		self.model = self.load()
 		if self.model is None:
 			self.model = self.train()
