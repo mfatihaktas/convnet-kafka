@@ -23,6 +23,9 @@ def log_to_std():
 level_log_m = {INFO: logger.info, DEBUG: logger.debug, WARNING: logger.warning, ERROR: logger.error, CRITICAL: logger.critical}
 
 def log_to_file(filename):
+	if not os.path.exists(filename):
+		os.makedirs(filename)
+
 	logger = logging.getLogger('convnet')
 
 	fh = logging.FileHandler(filename, mode='w') # mode='w'

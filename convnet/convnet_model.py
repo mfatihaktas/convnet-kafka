@@ -38,12 +38,22 @@ Note that the model in ./checkpoint will be replaced only if the newly trained m
 higher accuracy than the old one.
 E.g.,
 model = ConvNetModel(training_data_dir='./training', class_names=['0', '1'])
-model.train()  # Will force training the model even if a previously trained model exists
+model.train()	 # Will force training the model even if a previously trained model exists
 
 Class labels can be got for a given (numpy) array of images, img_array, as:
 model.get_predicted_class_labels(img_array)
 
 See test.py for example(s) on how to use ConvNetModel.
+
+To install dependencies, do
+./run.sh i
+
+To setup a virtual environment, do
+$ python3 -m venv ./venv
+To start the virtual environment, do
+$ source run.sh s
+
+TODO: Should we ship this in a container?
 """
 
 import os
@@ -76,6 +86,9 @@ class ConvNetModel:
 		self.validation_dataset = None
 
 		self.checkpoint_path = './checkpoint/cp.ckpt'
+		if not os.path.exists(self.checkpoint_path):
+			os.makedirs(self.checkpoint_path)
+
 		self.model = self.load()
 		if self.model is None:
 			self.model = self.train()
@@ -119,12 +132,12 @@ class ConvNetModel:
 
 		if self.validation_dataset is None:
 			self.validation_dataset = tf.keras.utils.image_dataset_from_directory(
-				                          self.training_data_dir,
-				                          batch_size=self.batch_size,
-				                          image_size=(self.img_height, self.img_width),
-				                          validation_split=0.2,
-				                          subset='validation',
-				                          seed=SEED)
+																	self.training_data_dir,
+																	batch_size=self.batch_size,
+																	image_size=(self.img_height, self.img_width),
+																	validation_split=0.2,
+																	subset='validation',
+																	seed=SEED)
 			log(DEBUG, "Loaded validation dataset", class_names=self.validation_dataset.class_names)
 
 		check(self.num_classes == len(self.train_dataset.class_names) and \
@@ -192,7 +205,11 @@ class ConvNetModel:
 			return None
 
 		## TODO: Check if it is better to do this with tf.keras.models.load_model
-		return tf.keras.models.load_model(self.checkpoint_path)
+		try:
+			return tf.keras.models.load_model(self.checkpoint_path)
+		except OSError:
+			log(WARNING, 'Saved model does not exist', checkpoint_path=self.checkpoint_path)
+			return None
 
 	def get_predicted_class_labels(self, img_array: np.ndarray) -> np.ndarray:
 		r = []

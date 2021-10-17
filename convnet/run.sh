@@ -12,7 +12,8 @@ elif [ $1 = 'm' ]; then
 elif [ $1 = 't' ]; then
   $PY test.py
 elif [ $1 = 'clean' ]; then
-  rm -r checkpoint/*
+  rm -r checkpoint
+  rm -r log
 else
   echo "Arg did not match!"
 fi
