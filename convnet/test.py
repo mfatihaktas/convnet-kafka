@@ -1,7 +1,7 @@
 import glob, PIL
 
 from debug_utils import *
-from model import *
+from convnet_model import *
 
 def test_w_random_imgs(model, num_imgs):
 	log(INFO, "started", num_imgs=num_imgs)

@@ -8,7 +8,7 @@ if [ $1 = 's' ]; then
 elif [ $1 = 'i' ]; then
   pip3 install -r requirements.txt
 elif [ $1 = 'm' ]; then
-  $PY model.py
+  $PY convnet_model.py
 elif [ $1 = 't' ]; then
   $PY test.py
 elif [ $1 = 'clean' ]; then
