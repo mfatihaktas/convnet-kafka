@@ -211,7 +211,7 @@ class ConvNetModel:
 			log(WARNING, 'Saved model does not exist', checkpoint_path=self.checkpoint_path)
 			return None
 
-	def get_predicted_class_labels(self, img_array: np.ndarray) -> np.ndarray:
+	def get_predicted_class_labels(self, img_array: np.ndarray) -> list:
 		r = []
 		for i in np.argmax(self.model.predict(img_array), axis=1):
 			r.append(self.class_names[i])
