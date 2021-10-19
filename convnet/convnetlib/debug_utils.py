@@ -22,13 +22,14 @@ def log_to_std():
 
 level_log_m = {INFO: logger.info, DEBUG: logger.debug, WARNING: logger.warning, ERROR: logger.error, CRITICAL: logger.critical}
 
-def log_to_file(filename):
-	if not os.path.exists(filename):
-		os.makedirs(filename)
+def log_to_file(filename, directory=None):
+	if directory and not os.path.exists(directory):
+		os.makedirs(directory)
 
 	logger = logging.getLogger('convnet')
 
-	fh = logging.FileHandler(filename, mode='w') # mode='w'
+	filepath = '{}/{}'.format(directory, filename)
+	fh = logging.FileHandler(filepath, mode='w')
 	fh.setLevel(logging.DEBUG)
 	fh.setFormatter(formatter)
 	logger.addHandler(fh)

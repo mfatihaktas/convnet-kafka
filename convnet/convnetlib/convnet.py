@@ -1,61 +1,3 @@
-"""
-Refs:
--- https://www.tensorflow.org/tutorials/images/cnn
--- https://cnvrg.io/cnn-tensorflow/
-
-class ConvNetModel: Implements a basic convolutional network model to learn how to
-classify images.
-
-Inputs:
-* training_data_dir: Directory of the training data set. It should be structured as
-directory/
-...class_a/
-......a_image_1.jpg
-......a_image_2.jpg
-...class_b/
-......b_image_1.jpg
-......b_image_2.jpg
-where folder class_x contain images with label x.
-Supported image formats: jpeg, png, bmp, gif
-
-* class_names: List of class names. This list has to match the list that is found
-in the training data set.
-
-* num_training_epochs: Number of epochs the model will be trained for.
-
-* batch_size: Number of samples to work through before updating the model parameters.
-
-* img_height, img_width, num_colors: Size of every image in the data set should be the
-same and be given by height x width x colors. The values set for these have to be consistent
-with the actual image size in the data set.
-
-How to use?
-Once an instance of ConvNetModel has been constructed, it will check if a previously
-trained model exists in ./checkpoint. If so, the old model will be loaded. If not, a new model
-will be trained over the data set in ./training_data_dir. If a new model needs to be trained
-despite the presence of an old model, then train() should be called explicity on the model.
-Note that the model in ./checkpoint will be replaced only if the newly trained model achieves
-higher accuracy than the old one.
-E.g.,
-model = ConvNetModel(training_data_dir='./training', class_names=['0', '1'])
-model.train()	 # Will force training the model even if a previously trained model exists
-
-Class labels can be got for a given (numpy) array of images, img_array, as:
-model.get_predicted_class_labels(img_array)
-
-See test.py for example(s) on how to use ConvNetModel.
-
-To install dependencies, do
-./run.sh i
-
-To setup a virtual environment, do
-$ python3 -m venv ./venv
-To start the virtual environment, do
-$ source run.sh s
-
-TODO: Should we ship this in a container?
-"""
-
 import os
 import tensorflow as tf
 import numpy as np
@@ -66,7 +8,7 @@ from plot_utils import *
 SEED = 123
 MAX_PIXEL_VALUE = 255
 
-class ConvNetModel:
+class ConvNet:
 	def __init__(self, training_data_dir: str, class_names: list, num_training_epochs: int = 1,
 							 batch_size: int = 32, img_height: int = 28, img_width: int = 28, num_colors: int = 3):
 		self.training_data_dir = training_data_dir
@@ -94,12 +36,12 @@ class ConvNetModel:
 			self.model = self.train()
 
 	def __repr__(self):
-		return 'ConvNetModel(\n' + \
+		return 'ConvNet(\n' + \
 					 '	training_data_dir= {}'.format(self.training_data_dir) + '\n' + \
 					 '	num_training_epochs= {}'.format(self.num_training_epochs) + '\n' + \
 					 '	batch_size= {}'.format(self.batch_size) + '\n' + \
 					 '	img_height= {}'.format(self.img_height) + '\n' + \
-					 '	img_width= {}'.format(self.img_width) + '\n)'
+					 '	img_width= {}'.format(self.img_width) + ')'
 
 	def summary(self):
 			self.model.summary()
@@ -146,7 +88,7 @@ class ConvNetModel:
 					input_class_names=self.class_names, found_class_names=self.train_dataset.class_names)
 		log(DEBUG, "done")
 
-	def train(self, num_epoch=1):
+	def train(self, num_epoch=1, save_training_accuracy_loss_imgs=False):
 		log(DEBUG, "started")
 
 		self.load_data()
@@ -167,29 +109,30 @@ class ConvNetModel:
 		loss, accuracy = model.evaluate(self.validation_dataset)
 		log(INFO, "Training is finished; results on validation dataset:", loss=loss, accuracy=accuracy, history=history)
 
-		fontsize = 14
-		fig, axs = plot.subplots(1, 2)
-		figsize = (2*5, 5)
+		if save_training_accuracy_loss_imgs:
+			fontsize = 14
+			fig, axs = plot.subplots(1, 2)
+			figsize = (2*5, 5)
 
-		ax = axs[0]
-		plot.sca(ax)
-		plot.plot(history.history['accuracy'], label='Training', color=next(nice_color), marker=next(marker_cycle), linestyle=next(linestyle_cycle), mew=3, ms=5)
-		plot.plot(history.history['val_accuracy'], label='Validation', color=next(nice_color), marker=next(marker_cycle), linestyle=next(linestyle_cycle), mew=3, ms=5)
-		plot.ylabel('Accuracy', fontsize=fontsize)
-		plot.xlabel('Epoch', fontsize=fontsize)
-		plot.legend(fontsize=fontsize)
+			ax = axs[0]
+			plot.sca(ax)
+			plot.plot(history.history['accuracy'], label='Training', color=next(nice_color), marker=next(marker_cycle), linestyle=next(linestyle_cycle), mew=3, ms=5)
+			plot.plot(history.history['val_accuracy'], label='Validation', color=next(nice_color), marker=next(marker_cycle), linestyle=next(linestyle_cycle), mew=3, ms=5)
+			plot.ylabel('Accuracy', fontsize=fontsize)
+			plot.xlabel('Epoch', fontsize=fontsize)
+			plot.legend(fontsize=fontsize)
 
-		ax = axs[1]
-		plot.sca(ax)
-		plot.plot(history.history['loss'], label='Training', color=next(nice_color), marker=next(marker_cycle), linestyle=next(linestyle_cycle), mew=3, ms=5)
-		plot.plot(history.history['val_loss'], label='Validation', color=next(nice_color), marker=next(marker_cycle), linestyle=next(linestyle_cycle), mew=3, ms=5)
-		plot.ylabel('Loss', fontsize=fontsize)
-		plot.xlabel('Epoch', fontsize=fontsize)
-		plot.legend(fontsize=fontsize)
+			ax = axs[1]
+			plot.sca(ax)
+			plot.plot(history.history['loss'], label='Training', color=next(nice_color), marker=next(marker_cycle), linestyle=next(linestyle_cycle), mew=3, ms=5)
+			plot.plot(history.history['val_loss'], label='Validation', color=next(nice_color), marker=next(marker_cycle), linestyle=next(linestyle_cycle), mew=3, ms=5)
+			plot.ylabel('Loss', fontsize=fontsize)
+			plot.xlabel('Epoch', fontsize=fontsize)
+			plot.legend(fontsize=fontsize)
 
-		fig.set_size_inches(figsize[0], figsize[1] )
-		plot.subplots_adjust(hspace=0.25, wspace=0.25)
-		plot.savefig('plot_accuracy_loss_over_epochs.png', bbox_inches='tight')
+			fig.set_size_inches(figsize[0], figsize[1] )
+			plot.subplots_adjust(hspace=0.25, wspace=0.25)
+			plot.savefig('plot_accuracy_loss_over_epochs.png', bbox_inches='tight')
 
 		log(DEBUG, "done")
 		return model
@@ -204,7 +147,6 @@ class ConvNetModel:
 			log(WARNING, 'Does not exist', checkpoint_path=self.checkpoint_path)
 			return None
 
-		## TODO: Check if it is better to do this with tf.keras.models.load_model
 		try:
 			return tf.keras.models.load_model(self.checkpoint_path)
 		except OSError:
