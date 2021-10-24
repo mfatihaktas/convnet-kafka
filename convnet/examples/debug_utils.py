@@ -7,7 +7,7 @@ WARNING = 2
 ERROR = 3
 CRITICAL = 4
 
-logger = logging.getLogger('convnet')
+logger = logging.getLogger('convnet/examples')
 logger.setLevel(logging.INFO)
 # logger.setLevel(logging.DEBUG)
 
@@ -15,7 +15,7 @@ FORMAT = '%(levelname)s] %(func_name)s: %(msg)s'
 formatter = logging.Formatter(FORMAT)
 
 def log_to_std():
-	logger = logging.getLogger('edge_cloud')
+	logger = logging.getLogger('convnet/examples')
 	sh = logging.StreamHandler()
 	sh.setFormatter(formatter)
 	logger.addHandler(sh)
@@ -26,7 +26,7 @@ def log_to_file(filename, directory=None):
 	if directory and not os.path.exists(directory):
 		os.makedirs(directory)
 
-	logger = logging.getLogger('convnet')
+	logger = logging.getLogger('convnet/examples')
 
 	filepath = '{}/{}'.format(directory, filename)
 	fh = logging.FileHandler(filepath, mode='w')
