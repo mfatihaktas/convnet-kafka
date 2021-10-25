@@ -4,7 +4,7 @@
 * `KafkaProducer` enables writing a <`key`, `value`> on a `topic`. It also allows for handling a write failure.
 * `KafkaConsumer` enables subscribing to a list of `topic`'s and read <`key`, `value`>'s from each. Kafka ensures that pairs with the same `key` are read in order.
 
-See the section on [inputs](#inputs) for detailed explanation on their behavior, and how to modify it if needed.
+See [Inputs](#inputs) for detailed explanation on their behavior, and how to modify it if needed.
 
 ## Installation
 There is no need to install, just import `KafkaProducer`/`KafkaConsumer` from `producer.py`/`consumer.py`.
@@ -34,7 +34,7 @@ producer.send(topic, key, value='v3')
 The full implementation is available at [examples/test_producer.py](examples/test_producer.py).
 
 Producer writes to kafka with `send(topic, key, value)` in which each argument has to be a string.
-By default, `send()` will return back to the producer's main thread after record is acknowledged to be written to the corresponding leader broker. As explained in Section [Inputs](#inputs) below, this behavior can be overwritten by setting the key `acks` in the optional argument `additional_conf` of `KafkaProducer`. Further details on `Kafka Acks` can be easily found online, e.g., [here](https://betterprogramming.pub/kafka-acks-explained-c0515b3b707e).
+By default, `send()` will return back to the producer's main thread after record is acknowledged to be written to the corresponding leader broker. As explained in [Inputs](#inputs) below, this behavior can be overwritten by setting the key `acks` in the optional argument `additional_conf` of `KafkaProducer`. Further details on `Kafka Acks` can be easily found online, e.g., [here](https://betterprogramming.pub/kafka-acks-explained-c0515b3b707e).
 
 ### An example usage of `KafkaConsumer`
 ```python
@@ -62,7 +62,7 @@ As soon as an instance of `KafkaConsumer` is constructed, a thread is started to
 
 - `handle_failed_send`: A callback function to handle failed send. It will be called with the `topic`, `key`, `value` that failed to be sent to the kafka broker.
 
-- `additional_conf`: An optional dictionary input to configure the properties of the kafka producer. It can be used to set any of the properties available for producers in [Kafka Python Client](https://docs.confluent.io/clients-confluent-kafka-python/current/overview.html). As mentioned in [usage](#usage), this argument can be used to overwrite the `acks` property to `0` or `all`. Note that even if `bootstrap.servers` and `client.id` are set in `additional_conf`, their values are set by the first two inputs: `producer_id` and `bootstrap_servers`.
+- `additional_conf`: An optional dictionary input to configure the properties of the kafka producer. It can be used to set any of the properties available for producers in [Kafka Python Client](https://docs.confluent.io/clients-confluent-kafka-python/current/overview.html). As mentioned in [Usage](#usage), this argument can be used to overwrite the `acks` property to `0` or `all`. Note that even if `bootstrap.servers` and `client.id` are set in `additional_conf`, their values are set by the first two inputs: `producer_id` and `bootstrap_servers`.
 
 ### Inputs to `KafkaConsumer`
 <a name="inputs"></a>
