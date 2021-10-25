@@ -1,4 +1,4 @@
-import confluent_kafka
+import confluent_kafka, sys, threading
 from typing import Callable
 
 from debug_utils import *
@@ -13,14 +13,16 @@ class KafkaConsumer:
 			{'group.id': group_id,
 			 'bootstrap.servers': bootstrap_servers})
 		if 'auto.offset.reset' not in self.conf:
-			self.conf['auto.offset.reset'] = 'earliest'
+			# self.conf['auto.offset.reset'] = 'earliest'
+			self.conf['auto.offset.reset'] = 'smallest'
 
 		self.on = True
 
 		self.consumer = confluent_kafka.Consumer(self.conf)
 		log(DEBUG, "constructed", consumer=self)
 
-		self.run()
+		self.t = threading.Thread(target=self.run, daemon=True)
+		self.t.start()
 
 	def __repr__(self):
 		return 'KafkaConsumer(conf= \n{})'.format(pprint.pformat(self.conf))
@@ -38,8 +40,10 @@ class KafkaConsumer:
 				if msg is None:
 					continue
 
+				sys.stdout.flush()
+
 				if msg.error():
-					if msg.error().code() == KafkaError._PARTITION_EOF:
+					if msg.error().code() == confluent_kafka.KafkaError._PARTITION_EOF:
 						## End of partition event
 						log(WARNING, "Reached EOF", topic=msg.topic(), partition=msg.partition(), offset=msg.offset())
 					elif msg.error():
@@ -48,6 +52,8 @@ class KafkaConsumer:
 					key = msg.key().decode('utf-8') if msg.key() else None
 					log(DEBUG, "Got a msg", topic=msg.topic(), partition=msg.partition(), offset=msg.offset(), key=key)
 					self.msg_callback(msg.topic(), key, msg.value().decode('utf-8'))
+
+				sys.stdout.flush()
 		finally:
 			## Close down consumer to commit final offsets.
 			self.consumer.close()

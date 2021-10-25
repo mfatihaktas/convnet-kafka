@@ -1,13 +1,19 @@
+from __future__ import annotations
 import confluent_kafka
+from typing import Callable
 
 from debug_utils import *
 
 class KafkaProducer:
-	def __init__(self, producer_id: str, bootstrap_servers: str, additional_conf: dict = {}):
+	def __init__(self, producer_id: str, bootstrap_servers: str,
+							 handle_failed_send: Callable[[KafkaProducer, str, str, str], None], additional_conf: dict = {}):
+		self.handle_failed_send = handle_failed_send
 		self.conf = additional_conf
 		self.conf.update(
 			{'client.id': producer_id,
 			 'bootstrap.servers': bootstrap_servers})
+		if 'acks' not in self.conf:
+			self.conf['acks'] = 1
 
 		self.producer = confluent_kafka.Producer(self.conf)
 		log(DEBUG, "constructed", producer=self)
@@ -17,7 +23,9 @@ class KafkaProducer:
 
 	def ack_callback(self, err, msg):
 		if err is not None:
-			log(ERROR, "Failed to send", err=err, msg=msg)
+			topic, key, value = msg.topic(), msg.key(), msg.value()
+			log(ERROR, "Failed to send", err=err, topic=topic, key=key, value=value)
+			self.handle_failed_send(self, topic, key, value)
 		else:
 			log(DEBUG, "Msg sent", msg=msg)
 

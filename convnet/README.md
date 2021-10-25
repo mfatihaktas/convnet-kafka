@@ -6,7 +6,7 @@ It provides two functionalities:
 * Predict the class names for a given array of images.
 
 ## Implementation
-It is implemented as a sinle-class library.
+It is implemented as a single-class library.
 
 ## Installation
 Navigate to the root folder, and run the following commands:
@@ -26,28 +26,28 @@ from convnetlib import convnet
 from convnetlib import convnet
 
 model = convnet.ConvNet(training_data_dir='/path/to/mnist-data/training',
-											  class_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+						class_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
 img_path_l = glob.glob('/path/to/imgs/*.png')
-	n = len(img_path_l)
+n = len(img_path_l)
 
-	plot.figure(figsize=(12, 12))
-	for i, img_path in enumerate(img_path_l):
-		with open(img_path, 'rb') as f:
-			img = PIL.Image.open(f)
-			img_rgb = img.convert('RGB')
-			array = np.asarray(img_rgb)
-			array = np.expand_dims(array, axis=0)
-			label = model.get_predicted_class_labels(array)[0]
-			log(INFO, "predicted label= {}".format(label))
+plot.figure(figsize=(12, 12))
+for i, img_path in enumerate(img_path_l):
+  with open(img_path, 'rb') as f:
+      img = PIL.Image.open(f)
+      img_rgb = img.convert('RGB')
+      array = np.asarray(img_rgb)
+      array = np.expand_dims(array, axis=0)
+      label = model.get_predicted_class_labels(array)[0]
+      log(INFO, "predicted label= {}".format(label))
 
-		plot.subplot(5, 5, i + 1)
-		plot.xticks([])
-		plot.yticks([])
-		plot.grid(False)
-		plot.imshow(np.asarray(img), cmap='gray')
-		plot.xlabel(label)
+  plot.subplot(5, 5, i + 1)
+  plot.xticks([])
+  plot.yticks([])
+  plot.grid(False)
+  plot.imshow(np.asarray(img), cmap='gray')
+  plot.xlabel(label)
 
-	plot.savefig("plot_test_results.png", bbox_inches='tight')
+plot.savefig("plot_test_results.png", bbox_inches='tight')
 ```
 
 Once a `ConvNet` instance is constructed, it will check if a previously

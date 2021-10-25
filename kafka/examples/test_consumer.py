@@ -1,4 +1,10 @@
-import time, sys, getopt
+## Add the upper directory into the import path
+import os, sys
+current_dir = os.path.dirname(os.path.realpath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+import getopt
 
 from consumer import KafkaConsumer
 from debug_utils import *
@@ -40,6 +46,7 @@ def test1(argv):
 	consumer = KafkaConsumer(m['group_id'], m['bootstrap_servers'], topic_l, callback_on_receive)
 	log(INFO, "Enter to terminate")
 	input()
+	consumer.close()
 
 	log(DEBUG, "done")
 

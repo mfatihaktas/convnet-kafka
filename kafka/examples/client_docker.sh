@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Note: container host address: docker.for.mac.localhost
-
 DOCKER=docker
 IMG=mfatihaktas/kafka-client
 CONT=kafka-client
-NET=kafka_app-tier
+NET=examples_app-tier
 
 COMMON_ARGS="--net $NET \
             -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181"
