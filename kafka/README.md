@@ -79,3 +79,4 @@ As soon as an instance of `KafkaConsumer` is constructed, a thread is started to
 - [Kafka Listeners - Explained](https://rmoff.net/2018/08/02/kafka-listeners-explained/)
 - [The Power of Kafka Partitions: How to Get the Most out of Your Kafka Cluster](https://www.instaclustr.com/the-power-of-kafka-partitions-how-to-get-the-most-out-of-your-kafka-cluster/)
 - [Bitnami Docker Image for Kafka](https://github.com/bitnami/bitnami-docker-kafka)
+- [kcat (formerly kafkacat) Utility](https://docs.confluent.io/platform/current/app-development/kafkacat-usage.html)
