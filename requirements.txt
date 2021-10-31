@@ -1,9 +1,2 @@
-## Convnetlib requirements
-tensorflow >= 2.1
-pillow
-matplotlib
-
-## Kafkalib requirements
-confluent-kafka
-
 wheel
+flask

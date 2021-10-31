@@ -1,13 +1,7 @@
-## Add the upper directory into the import path
-import os, sys
-current_dir = os.path.dirname(os.path.realpath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+import sys, getopt
 
-import getopt
-
-from consumer import KafkaConsumer
-from debug_utils import *
+from kafkalib.consumer import KafkaConsumer
+from kafkalib.debug_utils import *
 
 def parse_argv(argv):
 	m = {}

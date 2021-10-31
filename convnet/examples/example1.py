@@ -1,9 +1,9 @@
 import glob, PIL
 import numpy as np
-from convnetlib import convnet
 
-from debug_utils import *
-from plot_utils import *
+from convnetlib.convnet import ConvNet
+from convnetlib.debug_utils import *
+from convnetlib.plot_utils import *
 
 def test_w_random_imgs(model, num_imgs):
 	log(INFO, "started", num_imgs=num_imgs)
@@ -46,8 +46,8 @@ if __name__ == "__main__":
 	log_to_std()
 	log_to_file('test.log', directory='./log')
 
-	model = convnet.ConvNet(training_data_dir='/Users/mehmet/Desktop/fashion-mnist-data/training',
-													class_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+	model = ConvNet(training_data_dir='/Users/mehmet/Desktop/fashion-mnist-data/training',
+									class_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
 	# model.evaluate()
 
 	test_w_random_imgs(model, num_imgs=10)

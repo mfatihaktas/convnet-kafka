@@ -1,7 +1,7 @@
 import confluent_kafka, sys, threading
 from typing import Callable
 
-from debug_utils import *
+from kafkalib.debug_utils import *
 
 class KafkaConsumer:
 	def __init__(self, group_id: str, bootstrap_servers: str, topic_list: list[str],
@@ -40,8 +40,6 @@ class KafkaConsumer:
 				if msg is None:
 					continue
 
-				sys.stdout.flush()
-
 				if msg.error():
 					if msg.error().code() == confluent_kafka.KafkaError._PARTITION_EOF:
 						## End of partition event
@@ -52,8 +50,6 @@ class KafkaConsumer:
 					key = msg.key().decode('utf-8') if msg.key() else None
 					log(DEBUG, "Got a msg", topic=msg.topic(), partition=msg.partition(), offset=msg.offset(), key=key)
 					self.msg_callback(msg.topic(), key, msg.value().decode('utf-8'))
-
-				sys.stdout.flush()
 		finally:
 			## Close down consumer to commit final offsets.
 			self.consumer.close()

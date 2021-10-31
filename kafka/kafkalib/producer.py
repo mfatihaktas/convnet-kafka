@@ -1,8 +1,9 @@
 from __future__ import annotations
 import confluent_kafka
 from typing import Callable
+import numpy as np
 
-from debug_utils import *
+from kafkalib.debug_utils import *
 
 class KafkaProducer:
 	def __init__(self, producer_id: str, bootstrap_servers: str,
@@ -29,6 +30,10 @@ class KafkaProducer:
 		else:
 			log(DEBUG, "Msg sent", msg=msg)
 
-	def send(self, topic: str, key: str, value: str):
+	def send_string(self, topic: str, key: str, value: str):
 		self.producer.produce(topic, key.encode('utf-8'), value.encode('utf-8'), callback=self.ack_callback)
 		log(DEBUG, "done", topic=topic, key=key, value=value)
+
+	def send_array(self, topic: str, key: str, array: np.array):
+		self.producer.produce(topic, key.encode('utf-8'), array, callback=self.ack_callback)
+		log(DEBUG, "done", topic=topic, key=key, array_shape=array.shape)

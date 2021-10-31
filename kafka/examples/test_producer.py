@@ -1,13 +1,7 @@
-## Add the upper directory into the import path
-import os, sys
-current_dir = os.path.dirname(os.path.realpath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
-
 import time, getopt
 
-from producer import KafkaProducer
-from debug_utils import *
+from kafkalib.producer import KafkaProducer
+from kafkalib.debug_utils import *
 
 def parse_argv(argv):
 	m = {}
@@ -32,7 +26,7 @@ def parse_argv(argv):
 
 def handle_failed_send(producer, topic, key, value):
 	log(DEBUG, "started", topic=topic, key=key, value=value)
-	producer.send(topic, key, value)
+	producer.send_string(topic, key, value)
 
 def test1(argv):
 	log_to_std()
@@ -42,11 +36,11 @@ def test1(argv):
 
 	producer = KafkaProducer(producer_id, m['bootstrap_servers'], handle_failed_send)
 	topic, key = 'test', producer_id
-	producer.send(topic, key, value='v1')
+	producer.send_string(topic, key, value='v1')
 	time.sleep(1)
-	producer.send(topic, key, value='v2')
+	producer.send_string(topic, key, value='v2')
 	time.sleep(1)
-	producer.send(topic, key, value='v3')
+	producer.send_string(topic, key, value='v3')
 
 	log(DEBUG, "done")
 
