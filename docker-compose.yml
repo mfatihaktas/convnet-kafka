@@ -33,14 +33,16 @@ services:
       - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
       - zookeeper
-  img-classifier:
-    image: mfatihaktas/img-classification-service
-    container_name: img-classifier
-    build:
-      context: .
-      dockerfile: Dockerfile
-    networks:
-      - img-net
-    command: python3 -u /home/app/server.py --id=0 --bootstrap-servers='kafka:9092'
-    depends_on:
-      - kafka
+  # img-classifier:
+  #   image: mfatihaktas/img-classification-service
+  #   container_name: img-classifier
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   networks:
+  #     - img-net
+  #   ports:
+  #     - "8080:5000"
+  #   command: python3 -u /home/app/server.py --id=0 --bootstrap-servers='kafka:9092'
+  #   depends_on:
+  #     - kafka

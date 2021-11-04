@@ -1,5 +1,4 @@
-import threading, queue, getopt
-import numpy as np
+import numpy, threading, queue, getopt
 from flask import Flask, Response
 
 from kafkalib.producer import KafkaProducer
@@ -14,6 +13,9 @@ class Server_ImgsToKafka:
 							 img_height: int = 28, img_width: int = 28, num_colors: int = 3):
 		self._id = _id
 		self.kafka_bootstrap_servers = kafka_bootstrap_servers
+		self.img_height = img_height
+		self.img_width = img_width
+		self.num_colors = num_colors
 
 		self.on = True
 
@@ -34,6 +36,7 @@ class Server_ImgsToKafka:
 		log(DEBUG, "done")
 
 	def append_to_queue(self, img_array):
+		# TODO: Check if img_array.shape is consistent with self.img_height/img_width/num_colors
 		self.q.put(img_array)
 		log(DEBUG, "done", img_array_shape=img_array.shape)
 
@@ -60,23 +63,18 @@ def is_extension_allowed(filename):
 
 @app.route('/', methods=['POST'])
 def index():
-	if 'img' not in request.files:
-		app.logger.debug("Received no image")
-		return Response("POST should include field: 'img'",
-										status=HTTP_400_BAD_REQUEST)
+	# app.logger.debug("Received no image")
+	# return Response("POST should include field: 'img'",
+	# 								status=HTTP_400_BAD_REQUEST)
 
-	f = request.files['img']
-	if f is None or f.filename == '':
-		app.logger.debug("Received empty file")
-		return Response("POST should include non-empty image",
-										status=HTTP_400_BAD_REQUEST)
+	data = request.json
+	img_name = data['img_name']
+	log(DEBUG, "started", img_name=img_name)
+	if not is_extension_allowed(img_name):
+		app.logger.debug("File extension not allowed; img_name= {}".format(img_name))
+		return Response("File extension not allowed; img_name= {}".format(img_name), status=400)
 
-	if not is_extension_allowed(f.filename):
-		app.logger.debug("File extension not allowed; filename= {}".format(f.filename))
-		return Response("File extension not allowed; {}".format(f.filename), status=400)
-
-	img_str = f.read()
-	img_array = numpy.fromstring(img_str, np.uint8)
+	img_array = numpy.array(data['img_array'])
 	server.append_to_queue(img_array)
 	return Response("Received; img_shape= {}".format(img_array.shape), status=201)
 
@@ -111,7 +109,6 @@ def parse_argv(argv):
 	if 'num_colors' not in m:
 		m['num_colors'] = 3
 
-	log(DEBUG, "done", m=m)
 	return m
 
 if __name__ == "__main__":
