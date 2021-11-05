@@ -17,3 +17,5 @@ Navigate to the root folder, and run the following command:
 
 ## Dependencies
 Can be found in [requirements.txt](requirements.txt), [convnet/requirements.txt](convnet/requirements.txt) and [kafka/requirements.txt](kafka/requirements.txt).
+
+## Usage

@@ -1,4 +1,4 @@
-import sys, getopt
+import sys, getopt, numpy
 
 from kafkalib.consumer import KafkaConsumer
 from kafkalib.debug_utils import *
@@ -27,7 +27,7 @@ def parse_argv(argv):
 	log(DEBUG, "done", m=m)
 	return m
 
-def callback_on_receive(topic: str, key: str, value: str):
+def callback_for_topic_key_value(topic: str, key: str, value: str):
 	log(INFO, "Received", topic=topic, key=key, value=value)
 
 def test1(argv):
@@ -36,8 +36,9 @@ def test1(argv):
 	consumer_id = 'c' + m['id']
 	log_to_file('{}.log'.format(consumer_id), directory='./log')
 
-	topic_l = ['test']
-	consumer = KafkaConsumer(m['group_id'], m['bootstrap_servers'], topic_l, callback_on_receive)
+	topic_l = ['img']
+	consumer = KafkaConsumer(m['group_id'], m['bootstrap_servers'],
+													 topic_l, callback_for_topic_key_value)
 	log(INFO, "Enter to terminate")
 	input()
 	consumer.close()

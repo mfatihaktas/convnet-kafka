@@ -14,8 +14,8 @@ elif [ $1 = 'install' ]; then
   cd ../kafka
   pip3 install --force-reinstall dist/kafkalib-0.1.0-py3-*.whl
 elif [ $1 = 'clean' ]; then
-  # pip3 uninstall -y -r <(pip3 freeze)
-  pip3 uninstall convnetlib kafkalib
+  pip3 uninstall -y -r <(pip3 freeze)
+  # pip3 uninstall convnetlib kafkalib
   rm -r convnet/build convnet/dist convnet/convnetlib.egg-info
   rm -r kafka/build kafka/dist kafka/kafkalib.egg-info
 elif [ $1 = 'reinstall' ]; then

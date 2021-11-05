@@ -2,8 +2,8 @@ import os
 import tensorflow as tf
 import numpy as np
 
-from debug_utils import *
-from plot_utils import *
+from convnetlib.debug_utils import *
+from convnetlib.plot_utils import *
 
 SEED = 123
 MAX_PIXEL_VALUE = 255

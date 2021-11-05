@@ -3,7 +3,7 @@
 DC=docker-compose
 
 if [ $1 = 'up' ]; then
-  $DC up -d
+  $DC up -d --remove-orphans
 elif [ $1 = 'scale' ]; then
   $DC scale kafka=2
 elif [ $1 = 'stop' ]; then

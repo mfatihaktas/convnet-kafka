@@ -7,7 +7,11 @@
 See [Inputs](#inputs) for detailed explanation on their behavior, and how to modify it if needed.
 
 ## Installation
-There is no need to install, just import `KafkaProducer`/`KafkaConsumer` from `producer.py`/`consumer.py`.
+Navigate to the root folder, and run the following command:
+
+```bash
+./lib.sh install
+```
 
 ## Dependencies
 - [Kafka Python Client](https://docs.confluent.io/clients-confluent-kafka-python/current/overview.html)

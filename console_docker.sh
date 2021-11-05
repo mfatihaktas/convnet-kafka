@@ -19,7 +19,7 @@ elif [ $1 = 'kp' ]; then
          --property parse.key=true --property key.separator=":"
 elif [ $1 = 'kc' ]; then
   $DC_IT kafka-console-consumer.sh --topic $TOPIC --bootstrap-server $BROKER_ADDRESS \
-         --from-beginning --property print.key=true --property key.separator=":"
+         --from-beginning --property print.key=true --property print.value=true --property key.separator=":"
 elif [ $1 = 'kcat' ]; then
   # kcat -b localhost:9093 -t test
   kcat -b localhost:9093 -L -J | jq .

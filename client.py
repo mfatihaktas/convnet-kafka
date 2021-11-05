@@ -1,5 +1,6 @@
 import getopt, time, numpy, glob, requests
 from PIL import Image
+from io import BytesIO
 
 from debug_utils import *
 
@@ -25,13 +26,17 @@ class ImageClient:
 				img_array = numpy.asarray(img_rgb)
 				img_name = os.path.basename(img_path)
 				log(INFO, "Sending", img_name=img_name)
+
+				img_bytes = BytesIO()
+				numpy.save(img_bytes, img_array, allow_pickle=True)
+				img_bytes = img_bytes.getvalue()
 				r = requests.post(self.address,
-													json={'img_name': img_name,
-																'img_array': img_array.tolist()})
-				if not r.ok:
-					log(INFO, "Sent", img_name=img_name)
+													headers={'img_name': img_name},
+													data=img_bytes)
+				if r.ok:
+					log(INFO, "Sent", img_name=img_name, img_array_shape=img_array.shape)
 				else:
-					# TODO: Just log for now if the post request fails
+					# TODO: If the post request fails, for now just simply log
 					log(WARNING, "Post failed", img_name=img_name)
 
 		log(DEBUG, "done")

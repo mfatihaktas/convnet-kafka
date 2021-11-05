@@ -1,13 +1,14 @@
-import confluent_kafka, sys, threading
+import confluent_kafka, sys, threading, numpy, time, traceback
 from typing import Callable
 
 from kafkalib.debug_utils import *
 
 class KafkaConsumer:
 	def __init__(self, group_id: str, bootstrap_servers: str, topic_list: list[str],
-							 msg_callback: Callable[[str, str, str], None], additional_conf: dict = {}):
+							 callback_for_topic_key_value: Callable[[str, str, str], None],
+							 additional_conf: dict = {}):
 		self.topic_list = topic_list
-		self.msg_callback = msg_callback
+		self.callback_for_topic_key_value = callback_for_topic_key_value
 		self.conf = additional_conf
 		self.conf.update(
 			{'group.id': group_id,
@@ -29,15 +30,26 @@ class KafkaConsumer:
 
 	def close(self):
 		self.on = False
+		## Close down consumer to commit final offsets.
+		self.consumer.close()
 		log(DEBUG, "done")
 
 	def run(self):
 		log(DEBUG, "started", topic_list=self.topic_list)
-		try:
-			self.consumer.subscribe(self.topic_list)
-			while self.on:
+		while True:
+			try:
+				self.consumer.subscribe(self.topic_list)
+				log(INFO, "Subscribed", topic_list=self.topic_list)
+				break
+			except confluent_kafka.KafkaException:
+				log(WARNING, 'Topics not available, will try to subscribe again in 1 sec', topic_list=self.topic_list)
+				time.sleep(1)
+
+		while self.on:
+			try:
 				msg = self.consumer.poll(timeout=1.0)
 				if msg is None:
+					log(WARNING, "Msg is None; skipping")
 					continue
 
 				if msg.error():
@@ -47,11 +59,18 @@ class KafkaConsumer:
 					elif msg.error():
 						raise confluent_kafka.KafkaException(msg.error())
 				else:
+					topic = msg.topic()
 					key = msg.key().decode('utf-8') if msg.key() else None
 					log(DEBUG, "Got a msg", topic=msg.topic(), partition=msg.partition(), offset=msg.offset(), key=key)
-					self.msg_callback(msg.topic(), key, msg.value().decode('utf-8'))
-		finally:
-			## Close down consumer to commit final offsets.
-			self.consumer.close()
+
+					val = msg.value()
+					if val is None:
+						log(WARNING, "Value is None; skipping", topic=topic, key=key)
+						continue
+					self.callback_for_topic_key_value(topic, key, val)
+			except Exception as e:
+				## TODO: handle 'Subscribed topic not available' more properly
+				log(WARNING, "Exception!, will go back in the consume loop after 1 sec.\n{}".format(traceback.format_exc()))
+				time.sleep(1)
 
 		log(DEBUG, "done")

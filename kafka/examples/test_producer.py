@@ -1,4 +1,4 @@
-import time, getopt
+import time, getopt, numpy
 
 from kafkalib.producer import KafkaProducer
 from kafkalib.debug_utils import *
@@ -35,12 +35,17 @@ def test1(argv):
 	log_to_file('{}.log'.format(producer_id), directory='./log')
 
 	producer = KafkaProducer(producer_id, m['bootstrap_servers'], handle_failed_send)
-	topic, key = 'test', producer_id
-	producer.send_string(topic, key, value='v1')
+	topic, key = 'img', producer_id
+	producer.send(topic, key='k1', value='v1')
 	time.sleep(1)
-	producer.send_string(topic, key, value='v2')
+	producer.send(topic, key='k2', value='v2')
 	time.sleep(1)
-	producer.send_string(topic, key, value='v3')
+	producer.send(topic, key='k3', value='v3')
+
+	time.sleep(1)
+	producer.send(topic, key='a1', value=numpy.random.randint(2, size=2).tobytes())
+	time.sleep(1)
+	producer.send(topic, key='a2', value=numpy.random.randint(2, size=(2, 4)).tobytes())
 
 	log(DEBUG, "done")
 
