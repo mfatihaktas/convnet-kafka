@@ -49,7 +49,7 @@ if [ $1 = 'b' ]; then
   rm *.png *.log
   $DC build -t $IMG_NAME .
 elif [ $1 = 'bi' ]; then
-  $DC_IT /bin/bash
+  $DC_IT ${IMG_NAME} /bin/bash
 elif [ $1 = 's' ]; then
   run_container 'i' 's' $2
   # run_container 'd' 's' $2

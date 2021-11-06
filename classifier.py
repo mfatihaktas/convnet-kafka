@@ -28,21 +28,9 @@ class ImgClassifier:
 		log(DEBUG, "started", key=key, value_len=len(value))
 		check(topic == KAFKA_IMG_TOPIC, "Unexpected topic", topic=topic)
 
-		# try:
-		# 	img_array = numpy.frombuffer(value, dtype=byte)
-		# except Exception as e:
-		# 	log(WARNING, "Value is not a proper numpy.array; skipping.\n{}".format(traceback.format_exc()))
-
-		# check(img_array.shape == (self.img_height, self.img_width, self.num_colors),
-		# 			"Received img's shape is unexpected", img_shape=img_array.shape)
-
 		img_bytes = BytesIO(value)
 		img_array = numpy.load(img_bytes, allow_pickle=True)
 		log(DEBUG, "Received", img_array_shape=img_array.shape)
-		# try:
-		# 	img_array = numpy.reshape(img_array, (self.img_height, self.img_width, self.num_colors))
-		# except Exception as e:
-		# 	assert_("Received img array does not have incompatible size.\n{}".format(traceback.format_exc()))
 
 		img_array = numpy.expand_dims(img_array, axis=0)
 		class_name = self.model.get_predicted_class_labels(img_array)[0]
