@@ -33,6 +33,17 @@ services:
       - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
       - zookeeper
+  classifier:
+    image: mfatihaktas/img-classification-service
+    container_name: classifier
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - img-net
+    command: python3 -u /home/app/classifier.py --id=0 --training-data-dir=$TRAINING_DATA_DIR --class-names=$CLASS_NAMES --bootstrap-servers=kafka:9092
+    depends_on:
+      - kafka
   flask-server:
     image: mfatihaktas/img-classification-service
     container_name: flask-server
@@ -46,14 +57,14 @@ services:
     command: python3 -u /home/app/server.py --id=0 --bootstrap-servers=kafka:9092
     depends_on:
       - kafka
-  classifier:
+  client:
     image: mfatihaktas/img-classification-service
-    container_name: classifier
+    container_name: client
     build:
       context: .
       dockerfile: Dockerfile
     networks:
       - img-net
-    command: python3 -u /home/app/classifier.py --id=0 --training-data-dir=$TRAINING_DATA_DIR --class-names=$CLASS_NAMES --bootstrap-servers=kafka:9092
+    command: python3 -u /home/app/client.py --id=0 --img-dir=$IMG_DIR --server-ip=flask-server --server-port=5000
     depends_on:
-      - kafka
+      - flask-server

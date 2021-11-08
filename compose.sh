@@ -5,6 +5,7 @@ DC="docker compose"
 if [ $1 = 'up' ]; then
   TRAINING_DATA_DIR='/Users/mehmet/Desktop/fashion-mnist-data/training' \
   CLASS_NAMES='0,1,2,3,4,5,6,7,8,9' \
+  IMG_DIR='./convnet/examples/imgs' \
   $DC up -d --remove-orphans
 elif [ $1 = 'scale' ]; then
   $DC scale kafka=2

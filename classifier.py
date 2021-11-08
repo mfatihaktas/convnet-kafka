@@ -24,6 +24,10 @@ class ImgClassifier:
 		self.producer = KafkaProducer('producer_at_classifier_{}'.format(_id),
 																	bootstrap_servers, handle_failed_send)
 
+	def wait(self):
+		log(DEBUG, "started")
+		self.consumer.wait()
+
 	def callback_on_receiving_img(self, topic: str, key: str, value: str):
 		log(DEBUG, "started", key=key, value_len=len(value))
 		check(topic == KAFKA_IMG_TOPIC, "Unexpected topic", topic=topic)
@@ -92,5 +96,6 @@ if __name__ == "__main__":
 	classifier = ImgClassifier(m['id'], m['training_data_dir'], m['class_names'],
 														 m['bootstrap_servers'], m['img_height'], m['img_width'], m['num_colors'])
 
-	log(INFO, "Enter to terminate")
-	input()
+	# log(INFO, "Enter to terminate")
+	# input()
+	classifier.wait()

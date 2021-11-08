@@ -21,8 +21,6 @@ class ConvNet:
 		self.MAX_PIXEL_VALUE = MAX_PIXEL_VALUE
 
 		self.num_classes = len(self.class_names)
-		check(os.path.exists(self.training_data_dir),
-					"Non-existing directory", training_data_dir=self.training_data_dir)
 
 		self.train_dataset = None
 		self.validation_dataset = None
@@ -33,6 +31,8 @@ class ConvNet:
 
 		self.model = self.load()
 		if self.model is None:
+			check(os.path.exists(self.training_data_dir),
+						"Model does not exist. Training data directory does not exist either.", training_data_dir=self.training_data_dir)
 			self.model = self.train()
 
 	def __repr__(self):

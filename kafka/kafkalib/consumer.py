@@ -22,11 +22,15 @@ class KafkaConsumer:
 		self.consumer = confluent_kafka.Consumer(self.conf)
 		log(DEBUG, "constructed", consumer=self)
 
-		self.t = threading.Thread(target=self.run, daemon=True)
-		self.t.start()
+		self.consume_loop = threading.Thread(target=self.run, daemon=True)
+		self.consume_loop.start()
 
 	def __repr__(self):
 		return 'KafkaConsumer(conf= \n{})'.format(pprint.pformat(self.conf))
+
+	def wait(self):
+		log(DEBUG, "started")
+		self.consume_loop.join()
 
 	def close(self):
 		self.on = False

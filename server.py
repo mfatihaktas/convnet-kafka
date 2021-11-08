@@ -4,6 +4,7 @@ from flask import Flask, request, Response
 from kafkalib.producer import KafkaProducer
 from config import KAFKA_IMG_TOPIC, handle_failed_send
 from debug_utils import *
+from config import ALLOWED_IMG_EXTENSIONS
 
 class Server_ImgsToKafka:
 	def __init__(self, _id: str, kafka_bootstrap_servers: str):
@@ -47,11 +48,9 @@ class Server_ImgsToKafka:
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(16)
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
 def is_extension_allowed(filename):
 	return '.' in filename and \
-		filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+		filename.rsplit('.', 1)[1].lower() in ALLOWED_IMG_EXTENSIONS
 
 @app.route('/', methods=['POST'])
 def index():

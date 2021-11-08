@@ -20,6 +20,12 @@ Can be found in [requirements.txt](requirements.txt), [convnet/requirements.txt]
 
 ## Usage
 A basic environmen with a single `Client`, `Server`, `Kafka broker` and `Classifier` can be created locally by using [docker-compose.yml](docker-compose.yml) and [compose.sh](compose.sh).
+
+The required container image can be created by
+```bash
+./docker.sh b
+```
+
 The environment can be started by
 ```bash
 ./compose.sh up
@@ -33,10 +39,15 @@ The environment can be brought down by
 
 `TODO:` Environment defined in [docker-compose.yml](docker-compose.yml) is not scalable. Will write a yaml file to deploy a scalable environment on Kubernetes.
 
+#### Notes
+- `ConvNet` writes the model to `./checkpoint/` after training the model once. If the model is already available in `./checkpoint/` the next time, `ConvNet` will simply use the existing model without training a new one. One has to remove `./checkpoint/` to push `ConvNet` to train a new model. For further details, see [convnet/README.md](convnet/README.md).
+
 ### Inputs
 <a name="inputs"></a>
 In order to create the environment, [docker-compose.yml](docker-compose.yml) requires several environment variables to be set properly. These can be set in [compose.sh](compose.sh).
 
-- `TRAINING_DATA_DIR`: Path to the directory that holds the images to train a convolutional neural network for classification. This sets the `training_data_dir` in `ConvNet`. Further details can be found in [convnet/README.md](convnet/README.md).
+- `TRAINING_DATA_DIR`: Path to the directory that contains the images to train a convolutional neural network for classification. This sets the `training_data_dir` in `ConvNet`. Further details can be found in [convnet/README.md](convnet/README.md).
 
 - `CLASS_NAMES`: Class names for the images. This sets the `class_names` in `ConvNet`. Further details can be found in [convnet/README.md](convnet/README.md).
+
+- `IMG_DIR`: Path to the directory that contains the images `Client` wants to classify.

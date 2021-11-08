@@ -2,6 +2,7 @@ import getopt, time, numpy, glob, requests
 from PIL import Image
 from io import BytesIO
 
+from config import ALLOWED_IMG_EXTENSIONS
 from debug_utils import *
 
 class ImageClient:
@@ -15,7 +16,8 @@ class ImageClient:
 	def send_images(self):
 		log(DEBUG, "started")
 
-		img_path_l = glob.glob(self.img_dir + '/*.png')
+		img_path_l = [*glob.glob(self.img_dir + '/*.{}'.format(ext)) for ext in ALLOWED_IMG_EXTENSIONS]
+
 		for i, img_path in enumerate(img_path_l):
 			log(INFO, ">> img_path= {}".format(img_path))
 			log(INFO, "sleeping for 2 sec")
